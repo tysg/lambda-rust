@@ -11,26 +11,7 @@ on:
       - master
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Test
-        run: make test
-  publish-docs:
-    needs: [test]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Update Docker hub metadata
-        uses: docker://mpepping/docker-hub-metadata-github-action
-        env:
-          IMAGE: ${{ github.repository }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        continue-on-error: true
   publish:
-    needs: [test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -38,7 +19,7 @@ jobs:
         shell: bash
         run: make build
       - name: Publish
-        if: startsWith(github.ref, 'refs/tags/')
+        #if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
